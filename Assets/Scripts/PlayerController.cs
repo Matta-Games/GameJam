@@ -1,68 +1,194 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed = 6f;
+    public float moveSpeed = 4f;
+    public Transform cameraTransform;
+    public float headBobSpeed = 5f;
+    public float headBobAmount = 0.05f;
+    public float mouseSensitivity = 2f;
+    public Rigidbody rb;
 
-    [Header("Head Bob")]
-    public Transform cameraHolder;
-    public float bobSpeed = 8f;
-    public float bobAmount = 0.05f;
+    private float defaultYPos;
+    private float headBobTimer;
+    private float rotationX = 0f;
+    private float _gravity = 9.81f;
+    [SerializeField] private float gravityMultiplier = 3.0f;
 
-    private Rigidbody rb;
-    private Vector3 input;
+    // Sled interaction
+    private Sled nearestSled;
+    private float sledDetectionRange = 5f;
+    private bool isMountedOnSled = false;
 
-    private float bobTimer = 0f;
-    private Vector3 originalCamPos;
+    // Slow effect variables
+    private float slowAmount = 0f;
+    private float slowDuration = 0f;
+    private float slowTimer = 0f;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true; // estää kaatumisen
-
-        originalCamPos = cameraHolder.localPosition;
+        rb.useGravity = false;
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
+        defaultYPos = cameraTransform.localPosition.y;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
-        // Liike-input
-        float x = Input.GetAxisRaw("Horizontal");
-        float z = Input.GetAxisRaw("Vertical");
+        // Check for nearby sled
+        FindNearestSled();
 
-        input = new Vector3(x, 0f, z).normalized;
-
-        HandleHeadBob();
-    }
-
-    void FixedUpdate()
-    {
-        // Liikuta rigidbodyä
-        Vector3 move = transform.TransformDirection(input) * moveSpeed;
-        rb.MovePosition(rb.position + move * Time.fixedDeltaTime);
-    }
-
-    void HandleHeadBob()
-    {
-        bool isMoving = input.magnitude > 0.1f;
-
-        if (isMoving)
+        // Sled interaction
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            bobTimer += Time.deltaTime * bobSpeed;
-            float bobOffset = Mathf.Sin(bobTimer) * bobAmount;
+            if (nearestSled != null)
+            {
+                if (!nearestSled.IsPlayerMounted())
+                {
+                    MountSled(nearestSled);
+                }
+                else
+                {
+                    DismountSled();
+                }
+            }
+        }
 
-            cameraHolder.localPosition = new Vector3(
-                originalCamPos.x,
-                originalCamPos.y + bobOffset,
-                originalCamPos.z
-            );
+        // Only handle player movement when not on sled
+        if (!isMountedOnSled)
+        {
+            HandleMovement();
+            ApplyGravity();
+        }
+
+        HandleMouseLook();
+        HandleSlowEffect();
+    }
+
+    void FindNearestSled()
+    {
+        Sled[] sleds = FindObjectsOfType<Sled>();
+        nearestSled = null;
+        float nearestDistance = sledDetectionRange;
+
+        foreach (Sled sled in sleds)
+        {
+            float distance = Vector3.Distance(transform.position, sled.transform.position);
+            if (distance < nearestDistance)
+            {
+                nearestDistance = distance;
+                nearestSled = sled;
+            }
+        }
+    }
+
+    void MountSled(Sled sled)
+    {
+        isMountedOnSled = true;
+
+        // Make player kinematic so it follows sled perfectly
+        rb.isKinematic = true;
+
+        // Parent player to sled seat
+        transform.SetParent(sled.playerSeatPosition);
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
+
+        sled.MountPlayer(this);
+    }
+
+    void DismountSled()
+    {
+        if (nearestSled != null)
+        {
+            isMountedOnSled = false;
+
+            // Unparent player from sled
+            transform.SetParent(null);
+
+            // Move player slightly away from sled
+            transform.position += transform.parent != null ? Vector3.zero : nearestSled.transform.right * 2f;
+
+            // Make player dynamic again
+            rb.isKinematic = false;
+            rb.linearVelocity = Vector3.zero;
+
+            nearestSled.DismountPlayer();
+            nearestSled = null;
+        }
+    }
+
+    void ApplyGravity()
+    {
+        rb.linearVelocity += Vector3.down * _gravity * gravityMultiplier * Time.deltaTime;
+    }
+
+    void HandleMovement()
+    {
+        float moveX = Input.GetAxis("Horizontal");
+        float moveZ = Input.GetAxis("Vertical");
+        Vector3 movement = transform.right * moveX + transform.forward * moveZ;
+
+        Vector3 horizontalVelocity = new Vector3(movement.x * moveSpeed * (1 - slowAmount), rb.linearVelocity.y, movement.z * moveSpeed * (1 - slowAmount));
+
+        rb.linearVelocity = horizontalVelocity;
+
+        ApplyHeadBob(movement.magnitude > 0);
+    }
+
+    void HandleMouseLook()
+    {
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
+
+        rotationX -= mouseY;
+        rotationX = Mathf.Clamp(rotationX, -60f, 60f);
+
+        cameraTransform.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
+
+        // Only rotate body when not on sled
+        if (!isMountedOnSled)
+        {
+            transform.Rotate(Vector3.up * mouseX);
+        }
+    }
+
+    void ApplyHeadBob(bool isMoving)
+    {
+        if (!isMoving)
+        {
+            headBobTimer = 0;
+            cameraTransform.localPosition = new Vector3(cameraTransform.localPosition.x, defaultYPos, cameraTransform.localPosition.z);
+            return;
+        }
+
+        headBobTimer += Time.deltaTime * headBobSpeed;
+        cameraTransform.localPosition = new Vector3(cameraTransform.localPosition.x, defaultYPos + Mathf.Sin(headBobTimer) * headBobAmount, cameraTransform.localPosition.z);
+    }
+
+    public void ApplySlow(float slowAmount, float slowDuration)
+    {
+        this.slowAmount = slowAmount;
+        this.slowDuration = slowDuration;
+        slowTimer = slowDuration;
+    }
+
+    private void HandleSlowEffect()
+    {
+        if (slowTimer > 0f)
+        {
+            slowTimer -= Time.deltaTime;
         }
         else
         {
-            cameraHolder.localPosition = Vector3.Lerp(
-                cameraHolder.localPosition,
-                originalCamPos,
-                Time.deltaTime * bobSpeed
-            );
+            slowAmount = 0f;
         }
+    }
+
+    public bool IsMountedOnSled()
+    {
+        return isMountedOnSled;
     }
 }
