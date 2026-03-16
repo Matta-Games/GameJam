@@ -1,66 +1,49 @@
 using UnityEngine;
 
-[RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
-    [Header("Movement")]
     public float moveSpeed = 6f;
-    public float gravity = -9.81f;
-    public float jumpHeight = 1.5f;
-
-    [Header("Ground Check")]
-    public Transform groundCheck;
-    public float groundDistance = 0.3f;
-    public LayerMask groundMask;
 
     [Header("Head Bob")]
     public Transform cameraHolder;
     public float bobSpeed = 8f;
     public float bobAmount = 0.05f;
 
-    private CharacterController controller;
-    private Vector3 velocity;
-    private bool isGrounded;
+    private Rigidbody rb;
+    private Vector3 input;
 
     private float bobTimer = 0f;
     private Vector3 originalCamPos;
 
     void Start()
     {
-        controller = GetComponent<CharacterController>();
+        rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true; // est‰‰ kaatumisen
+
         originalCamPos = cameraHolder.localPosition;
     }
 
     void Update()
     {
-        // Ground check
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        // Liike-input
+        float x = Input.GetAxisRaw("Horizontal");
+        float z = Input.GetAxisRaw("Vertical");
 
-        if (isGrounded && velocity.y < 0)
-            velocity.y = -2f;
+        input = new Vector3(x, 0f, z).normalized;
 
-        // Movement input
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
-
-        Vector3 move = transform.right * x + transform.forward * z;
-        controller.Move(move * moveSpeed * Time.deltaTime);
-
-        // Jump
-        if (Input.GetButtonDown("Jump") && isGrounded)
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-
-        // Gravity
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
-
-        // Head bob
-        HandleHeadBob(x, z);
+        HandleHeadBob();
     }
 
-    void HandleHeadBob(float x, float z)
+    void FixedUpdate()
     {
-        bool isMoving = (x != 0 || z != 0) && isGrounded;
+        // Liikuta rigidbody‰
+        Vector3 move = transform.TransformDirection(input) * moveSpeed;
+        rb.MovePosition(rb.position + move * Time.fixedDeltaTime);
+    }
+
+    void HandleHeadBob()
+    {
+        bool isMoving = input.magnitude > 0.1f;
 
         if (isMoving)
         {
