@@ -287,6 +287,7 @@ GameObject:
   - component: {fileID: 1721979609}
   - component: {fileID: 1721979608}
   - component: {fileID: 1721979607}
+  - component: {fileID: 1721979611}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -377,6 +378,26 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1721979611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1721979606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5960a6801ca77df4baa45b541e97251b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::compass
+  compassBarTransform: {fileID: 0}
+  objectiveMarkerTransform: {fileID: 0}
+  northMarkerTransform: {fileID: 0}
+  southMarkerTransform: {fileID: 0}
+  eastMarkerTransform: {fileID: 0}
+  westMarkerTransform: {fileID: 0}
+  cameraObjectTransform: {fileID: 0}
+  objectiveObjectTransform: {fileID: 0}
 --- !u!1 &1824296734
 GameObject:
   m_ObjectHideFlags: 0
