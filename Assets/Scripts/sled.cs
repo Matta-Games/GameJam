@@ -31,8 +31,6 @@ public class Sled : MonoBehaviour
         }
 
         rb.useGravity = false;
-        rb.freezeRotation = true;
-        rb.constraints = RigidbodyConstraints.FreezeRotation;
         rb.mass = 5f;
         rb.linearDamping = 0.5f;
         rb.angularDamping = 0.5f;
