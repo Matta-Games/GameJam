@@ -8,12 +8,11 @@ public class Needs : MonoBehaviour
     public Transform paranoiaBar;
 
     [Header("Current Percentages 0-1")]
-    [Range(0f,1f)] public float bodyTempPercent = 0.2f;
-    [Range(0f,1f)] public float fatiguePercent = 0.2f;
-    [Range(0f,1f)] public float paranoiaPercent = 0.2f;
+    [Range(0f, 1f)] public float bodyTempPercent = 0.2f;
+    [Range(0f, 1f)] public float fatiguePercent = 0.2f;
+    [Range(0f, 1f)] public float paranoiaPercent = 0.2f;
 
     [Header("Increase per 45s")]
-    public float bodyTempRatePer45s = 0.0183f;
     public float fatigueRatePer45s = 0.0098f;
     public float paranoiaRatePer45s = 0.0120f;
 
@@ -55,21 +54,33 @@ public class Needs : MonoBehaviour
 
     void Update()
     {
-        timer += Time.deltaTime;
+        // Continuous body temperature change
+        if (isBeingHeated)
+        {
+            bodyTempPercent += heatGainPerSecond * Time.deltaTime;
+        }
+        else
+        {
+            bodyTempPercent -= coldDrainPerSecond * Time.deltaTime;
+        }
 
+        bodyTempPercent = Mathf.Clamp01(bodyTempPercent);
+
+        // Passive fatigue/paranoia increase every 45s
+        timer += Time.deltaTime;
         if (timer >= interval)
         {
-            bodyTempPercent += bodyTempRatePer45s;
             fatiguePercent += fatigueRatePer45s;
             paranoiaPercent += paranoiaRatePer45s;
 
-            bodyTempPercent = Mathf.Clamp01(bodyTempPercent);
             fatiguePercent = Mathf.Clamp01(fatiguePercent);
             paranoiaPercent = Mathf.Clamp01(paranoiaPercent);
 
-            UpdateAllBars();
             timer = 0f;
         }
+
+        // Update all bars visually
+        UpdateAllBars();
     }
 
     void UpdateAllBars()
@@ -84,8 +95,7 @@ public class Needs : MonoBehaviour
         if (bar == null) return;
 
         Vector3 scale = baseScale;
-        scale.x = percent; // 🔥 THIS is the fix
-
+        scale.x = percent;
         bar.localScale = scale;
     }
 }
