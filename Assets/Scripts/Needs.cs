@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class MSCBarScaler : MonoBehaviour
+public class Needs : MonoBehaviour
 {
     [Header("Bars (transform that you want to scale X)")]
     public Transform bodyTempBar;
