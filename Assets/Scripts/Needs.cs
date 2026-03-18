@@ -17,6 +17,11 @@ public class MSCBarScaler : MonoBehaviour
     public float fatigueRatePer45s = 0.0098f;
     public float paranoiaRatePer45s = 0.0120f;
 
+    [Header("Heat System")]
+    public bool isBeingHeated = false;
+    public float heatGainPerSecond = 0.05f;
+    public float coldDrainPerSecond = 0.01f;
+
     private float timer = 0f;
     private const float interval = 45f;
 
