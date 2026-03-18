@@ -25,19 +25,26 @@ public class Fire : MonoBehaviour
     {
         if (!heat) return;
 
-        MSCBarScaler stats = other.GetComponent<MSCBarScaler>();
-        if (stats != null)
+        // Only affect objects tagged "Player"
+        if (other.CompareTag("Player"))
         {
-            stats.isBeingHeated = true;
+            Needs stats = other.GetComponent<Needs>();
+            if (stats != null)
+            {
+                stats.isBeingHeated = true;
+            }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        MSCBarScaler stats = other.GetComponent<MSCBarScaler>();
-        if (stats != null)
+        if (other.CompareTag("Player"))
         {
-            stats.isBeingHeated = false;
+            Needs stats = other.GetComponent<Needs>();
+            if (stats != null)
+            {
+                stats.isBeingHeated = false;
+            }
         }
     }
 
