@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class MSCBarScaler : MonoBehaviour
+public class Needs : MonoBehaviour
 {
     [Header("Bars (transform that you want to scale X)")]
     public Transform bodyTempBar;
@@ -16,6 +16,11 @@ public class MSCBarScaler : MonoBehaviour
     public float bodyTempRatePer45s = 0.0183f;
     public float fatigueRatePer45s = 0.0098f;
     public float paranoiaRatePer45s = 0.0120f;
+
+    [Header("Heat System")]
+    public bool isBeingHeated = false;
+    public float heatGainPerSecond = 0.05f;
+    public float coldDrainPerSecond = 0.01f;
 
     private float timer = 0f;
     private const float interval = 45f;
