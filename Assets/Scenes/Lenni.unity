@@ -153,9 +153,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 6
-  cameraHolder: {fileID: 71330650}
-  bobSpeed: 8
-  bobAmount: 0.05
+  cameraTransform: {fileID: 0}
+  headBobSpeed: 5
+  headBobAmount: 0.05
+  mouseSensitivity: 2
+  rb: {fileID: 0}
+  gravityMultiplier: 3
 --- !u!136 &6808382
 CapsuleCollider:
   m_ObjectHideFlags: 0
