@@ -31,8 +31,6 @@ public class Sled : MonoBehaviour
         }
 
         rb.useGravity = false;
-        rb.freezeRotation = true;
-        rb.constraints = RigidbodyConstraints.FreezeRotation;
         rb.mass = 5f;
         rb.linearDamping = 0.5f;
         rb.angularDamping = 0.5f;
@@ -54,8 +52,27 @@ public class Sled : MonoBehaviour
             currentSpeed = Mathf.Lerp(currentSpeed, 0f, deceleration * Time.deltaTime);
         }
 
+        // Flip failsafe
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            FlipSled();
+        }
+
         MoveSled();
         ApplyGravity();
+    }
+
+    void FlipSled()
+    {
+        // Stop movement so it doesn’t yeet itself mid-flip
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        // Set rotation to your desired upright angle
+        transform.rotation = Quaternion.Euler(-90f, transform.eulerAngles.y, 0f);
+
+        // Lift slightly so it doesn't clip into ground
+        transform.position += Vector3.up * 0.5f;
     }
 
     void HandleSledInput()
