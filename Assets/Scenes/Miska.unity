@@ -776,7 +776,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d8ba179dd24f4634e8254883465996c0, type: 2}
+  - {fileID: 2100000, guid: 7050b242724a44443a3f4ac46ffc4bc6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1712,7 +1712,7 @@ PrefabInstance:
     - target: {fileID: 5673624683974525360, guid: f7253bfac272ad44d823cd008314fca7, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: d8ba179dd24f4634e8254883465996c0, type: 2}
+      objectReference: {fileID: 2100000, guid: 7050b242724a44443a3f4ac46ffc4bc6, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 555416748389109968, guid: f7253bfac272ad44d823cd008314fca7, type: 3}
@@ -2353,7 +2353,7 @@ PrefabInstance:
     - target: {fileID: 5673624683974525360, guid: f7253bfac272ad44d823cd008314fca7, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: d8ba179dd24f4634e8254883465996c0, type: 2}
+      objectReference: {fileID: 2100000, guid: 7050b242724a44443a3f4ac46ffc4bc6, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 555416748389109968, guid: f7253bfac272ad44d823cd008314fca7, type: 3}
@@ -3360,7 +3360,7 @@ PrefabInstance:
     - target: {fileID: 5673624683974525360, guid: f7253bfac272ad44d823cd008314fca7, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: d8ba179dd24f4634e8254883465996c0, type: 2}
+      objectReference: {fileID: 2100000, guid: 7050b242724a44443a3f4ac46ffc4bc6, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 555416748389109968, guid: f7253bfac272ad44d823cd008314fca7, type: 3}
@@ -6912,7 +6912,7 @@ PrefabInstance:
     - target: {fileID: 5673624683974525360, guid: f7253bfac272ad44d823cd008314fca7, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: d8ba179dd24f4634e8254883465996c0, type: 2}
+      objectReference: {fileID: 2100000, guid: 7050b242724a44443a3f4ac46ffc4bc6, type: 2}
     - target: {fileID: 6626014457965143419, guid: f7253bfac272ad44d823cd008314fca7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.548
