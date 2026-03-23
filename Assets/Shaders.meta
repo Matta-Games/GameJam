@@ -1,6 +1,10 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Shaders.meta
 guid: cd49983d7d3a14152a122026e41fbda7
 folderAsset: yes
+========
+guid: 40dac5fcab5e7c34b964c8404318a088
+>>>>>>>> 69ed69d52f4396444e9c8c23dc4375c2dafbcc75:Assets/Scenes/Miska.unity.meta
 DefaultImporter:
   externalObjects: {}
   userData: 
