@@ -16,6 +16,10 @@ public class Sled : MonoBehaviour
     public LayerMask groundLayer;
     public float gravityScale = 2f;
 
+    [Header("Audio")]
+    public AudioSource movementAudio;
+    public float minSoundSpeed = 0.2f;
+
     private Rigidbody rb;
     private PlayerController mountedPlayer;
     private Transform playerCamera;
@@ -28,6 +32,11 @@ public class Sled : MonoBehaviour
         if (rb == null)
         {
             rb = gameObject.AddComponent<Rigidbody>();
+        }
+
+        if (movementAudio == null)
+        {
+            movementAudio = GetComponent<AudioSource>();
         }
 
         rb.useGravity = false;
@@ -113,10 +122,22 @@ public class Sled : MonoBehaviour
 
             Vector3 movement = cameraForward * currentSpeed;
             rb.linearVelocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
+
+            // Play sound
+            if (movementAudio != null && !movementAudio.isPlaying && Mathf.Abs(currentSpeed) > minSoundSpeed)
+            {
+                movementAudio.Play();
+            }
         }
         else
         {
             rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
+
+            // Stop sound
+            if (movementAudio != null && movementAudio.isPlaying)
+            {
+                movementAudio.Stop();
+            }
         }
     }
 
@@ -138,6 +159,12 @@ public class Sled : MonoBehaviour
         mountedPlayer = null;
         playerCamera = null;
         currentSpeed = 0f;
+
+        // Audio failsafe
+        if (movementAudio != null && movementAudio.isPlaying)
+        {
+            movementAudio.Stop();
+        }
     }
 
     public bool IsPlayerMounted()

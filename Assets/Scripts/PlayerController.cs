@@ -26,6 +26,11 @@ public class PlayerController : MonoBehaviour
     private float slowDuration = 0f;
     private float slowTimer = 0f;
 
+    [Header("Audio")]
+    public AudioSource voiceSource;
+    public AudioClip[] swearLines;
+    public KeyCode swearKey = KeyCode.V;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -55,6 +60,10 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+        if (Input.GetKeyDown(swearKey))
+        {
+            PlaySwear();
+        }
 
         // Only handle player movement when not on sled
         if (!isMountedOnSled)
@@ -81,6 +90,17 @@ public class PlayerController : MonoBehaviour
                 nearestDistance = distance;
                 nearestSled = sled;
             }
+        }
+    }
+    void PlaySwear()
+    {
+        if (voiceSource == null || swearLines.Length == 0) return;
+
+        if (!voiceSource.isPlaying)
+        {
+            int index = Random.Range(0, swearLines.Length);
+            voiceSource.clip = swearLines[index];
+            voiceSource.Play();
         }
     }
 

@@ -2,8 +2,14 @@ using UnityEngine;
 
 public class NPCD : MonoBehaviour
 {
+    [Header("Dialogue")]
     [TextArea(2, 5)]
     public string[] dialogueLines;
+
+    [Header("Voice Lines (same order as dialogue)")]
+    public AudioClip[] voiceLines;
+
+    public AudioSource voiceSource;
 
     private bool playerInRange = false;
     private bool isTalking = false;
@@ -19,7 +25,7 @@ public class NPCD : MonoBehaviour
             }
             else
             {
-                NextLine();
+                NextLine(); // skip current and go next
             }
         }
     }
@@ -28,8 +34,7 @@ public class NPCD : MonoBehaviour
     {
         isTalking = true;
         currentLine = 0;
-
-        NPCmanager.Instance.ShowDialogue(dialogueLines[currentLine]);
+        ShowCurrentLine();
     }
 
     void NextLine()
@@ -38,7 +43,7 @@ public class NPCD : MonoBehaviour
 
         if (currentLine < dialogueLines.Length)
         {
-            NPCmanager.Instance.ShowDialogue(dialogueLines[currentLine]);
+            ShowCurrentLine();
         }
         else
         {
@@ -46,9 +51,32 @@ public class NPCD : MonoBehaviour
         }
     }
 
+    void ShowCurrentLine()
+    {
+        NPCmanager.Instance.ShowDialogue(dialogueLines[currentLine]);
+
+        // stop previous audio if playing
+        if (voiceSource != null)
+            voiceSource.Stop();
+
+        // play matching voice line
+        if (voiceSource != null &&
+            voiceLines != null &&
+            currentLine < voiceLines.Length &&
+            voiceLines[currentLine] != null)
+        {
+            voiceSource.clip = voiceLines[currentLine];
+            voiceSource.Play();
+        }
+    }
+
     void EndDialogue()
     {
         isTalking = false;
+
+        if (voiceSource != null)
+            voiceSource.Stop();
+
         NPCmanager.Instance.HideDialogue();
     }
 
