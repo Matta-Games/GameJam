@@ -12,6 +12,12 @@ public class BlizzardManager : MonoBehaviour
     public float blizzardFogDensity = 0.5f;
     public float blizzardCooldown = 20f;
 
+    [Header("Shake Settings")]
+    public float shakeIntensity = 10f;
+    public float shakeSpeed = 25f;
+
+    private Vector3 warningOriginalPos;
+
     [Header("UI")]
     public TextMeshProUGUI warningText;
     public float warningDuration = 2f;
@@ -27,17 +33,25 @@ public class BlizzardManager : MonoBehaviour
     {
         blizzardTimer = blizzardCheckInterval;
 
-        // Set initial fog density
         if (RenderSettings.fog)
         {
             RenderSettings.fogDensity = normalFogDensity;
         }
 
-        // Hide warning text initially
         if (warningText != null)
         {
             warningText.text = "";
+            warningOriginalPos = warningText.rectTransform.localPosition;
         }
+    }
+
+    void ShakeWarning()
+    {
+        if (warningText == null) return;
+
+        Vector2 randomOffset = Random.insideUnitCircle * shakeIntensity;
+        warningText.rectTransform.localPosition =
+            warningOriginalPos + new Vector3(randomOffset.x, randomOffset.y, 0f);
     }
 
     void Update()
@@ -48,6 +62,15 @@ public class BlizzardManager : MonoBehaviour
         if (cooldownTimer > 0f)
         {
             cooldownTimer -= Time.deltaTime;
+        }
+
+        if (isBlizzardActive)
+        {
+            ShakeWarning();
+        }
+        else if (warningText != null)
+        {
+            warningText.rectTransform.localPosition = warningOriginalPos;
         }
 
         if (blizzardTimer <= 0f && !isBlizzardActive && cooldownTimer <= 0f)
@@ -69,7 +92,7 @@ public class BlizzardManager : MonoBehaviour
         // Show warning text
         if (warningText != null)
         {
-            warningText.text = "Blizzard Warning Get Inside!";
+            warningText.text = "Blizzard approaching\r\nVisibility will be reduced!";
             warningText.alpha = 1f;
         }
 

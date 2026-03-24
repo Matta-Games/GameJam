@@ -15,6 +15,8 @@ public class NPCD : MonoBehaviour
     private bool isTalking = false;
     private int currentLine = 0;
 
+    public ShopController shop;
+
     void Update()
     {
         if (playerInRange && Input.GetKeyDown(KeyCode.F))
@@ -78,6 +80,9 @@ public class NPCD : MonoBehaviour
             voiceSource.Stop();
 
         NPCmanager.Instance.HideDialogue();
+
+        if (shop != null)
+            shop.EnterShop();
     }
 
     private void OnTriggerEnter(Collider other)
