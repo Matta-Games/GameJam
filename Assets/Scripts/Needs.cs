@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class Needs : MonoBehaviour
 {
@@ -7,10 +8,15 @@ public class Needs : MonoBehaviour
     public Transform fatigueBar;
     public Transform paranoiaBar;
 
+    [Header("Value texts")]
+    public TextMeshProUGUI moneyText;
+
     [Header("Current Percentages 0-1")]
     [Range(0f, 1f)] public float bodyTempPercent = 0.2f;
     [Range(0f, 1f)] public float fatiguePercent = 0.2f;
     [Range(0f, 1f)] public float paranoiaPercent = 0.2f;
+    [Header("Values")]
+    public int money = 2999;
 
     [Header("Increase per 45s")]
     public float fatigueRatePer45s = 0.0098f;
@@ -33,6 +39,11 @@ public class Needs : MonoBehaviour
     private Vector3 bodyTempBaseScale;
     private Vector3 fatigueBaseScale;
     private Vector3 paranoiaBaseScale;
+    [Header("How often bodytemp updatess")]
+
+
+    float bodyTempTimer = 0f;
+    float bodyTempInterval = 1f; // 1 second
 
     void Start()
     {
@@ -55,17 +66,26 @@ public class Needs : MonoBehaviour
         }
 
         UpdateAllBars();
+        addMoney(1);
     }
 
     void Update()
     {
-        // Body temperature
-        if (isBeingHeated)
-            bodyTempPercent += heatGainPerSecond * Time.deltaTime;
-        else
-            bodyTempPercent -= coldDrainPerSecond * Time.deltaTime;
+      // Body temperature (every 1 second)
+      bodyTempTimer += Time.deltaTime;
 
-        bodyTempPercent = Mathf.Clamp01(bodyTempPercent);
+        if (bodyTempTimer >= bodyTempInterval)
+        {
+            if (isBeingHeated)
+                bodyTempPercent += heatGainPerSecond;
+            else
+                bodyTempPercent -= coldDrainPerSecond;
+
+            bodyTempPercent = Mathf.Clamp01(bodyTempPercent);
+
+            bodyTempTimer = 0f;
+
+        }
 
         // 45s fatigue/paranoia increase
         timer += Time.deltaTime;
@@ -80,14 +100,6 @@ public class Needs : MonoBehaviour
             timer = 0f;
         }
 
-        // Paranoia drain every second
-        paranoiaTimer += Time.deltaTime;
-        if (paranoiaTimer >= paranoiaInterval)
-        {
-            paranoiaPercent -= paranoiaDrainPerSecond;
-            paranoiaPercent = Mathf.Clamp01(paranoiaPercent);
-            paranoiaTimer = 0f;
-        }
 
         UpdateAllBars();
     }
@@ -106,5 +118,18 @@ public class Needs : MonoBehaviour
         Vector3 scale = baseScale;
         scale.x = percent;
         bar.localScale = scale;
+    }
+
+    public void addMoney(int moneyToAdd) {
+      money += moneyToAdd;
+      moneyText.text = money.ToString();
+    }
+    public bool Spend(int amount)
+    {
+        if (money < amount)
+            return false;
+
+        money -= amount;
+        return true;
     }
 }
