@@ -7,17 +7,15 @@ public class ShopController : MonoBehaviour
     public Camera playerCamera;
     public Camera shopCamera;
 
-    [Header("Player")]
-    public PlayerController playerController;
-
     [Header("Transition")]
     public float transitionSpeed = 2f;
 
-    private bool inShop = false;
+    public bool inShop = false;
 
     void Start()
     {
-        shopCamera.gameObject.SetActive(false);
+        if (shopCamera != null)
+            shopCamera.gameObject.SetActive(false);
     }
 
     void Update()
@@ -30,23 +28,11 @@ public class ShopController : MonoBehaviour
 
     public void EnterShop()
     {
-        if (playerController != null)
-            playerController.inShopMode = true;
-
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
         StartCoroutine(TransitionToShop());
     }
 
     void ExitShop()
     {
-        if (playerController != null)
-            playerController.inShopMode = false;
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
         StartCoroutine(TransitionBack());
     }
 
@@ -54,7 +40,8 @@ public class ShopController : MonoBehaviour
     {
         inShop = true;
 
-        shopCamera.gameObject.SetActive(true);
+        if (shopCamera != null)
+            shopCamera.gameObject.SetActive(true);
 
         float t = 0f;
 
@@ -77,7 +64,6 @@ public class ShopController : MonoBehaviour
             yield return null;
         }
     }
-
 
     IEnumerator TransitionBack()
     {
@@ -103,6 +89,8 @@ public class ShopController : MonoBehaviour
         }
 
         inShop = false;
-        shopCamera.gameObject.SetActive(false);
+
+        if (shopCamera != null)
+            shopCamera.gameObject.SetActive(false);
     }
 }
