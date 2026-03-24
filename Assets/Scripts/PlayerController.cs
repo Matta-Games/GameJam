@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public float headBobAmount = 0.05f;
     public float mouseSensitivity = 2f;
     public Rigidbody rb;
+    [HideInInspector] public bool inShopMode = false;
 
     private float defaultYPos;
     private float headBobTimer;
@@ -42,38 +43,28 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        // Check for nearby sled
-        FindNearestSled();
-
-        // Sled interaction
-        if (Input.GetKeyDown(KeyCode.E))
+        if (!inShopMode)
         {
-            if (nearestSled != null)
+            FindNearestSled();
+
+            if (Input.GetKeyDown(KeyCode.E))
             {
-                if (!nearestSled.IsPlayerMounted())
+                if (nearestSled != null)
                 {
-                    MountSled(nearestSled);
-                }
-                else
-                {
-                    DismountSled();
+                    if (!nearestSled.IsPlayerMounted())
+                        MountSled(nearestSled);
+                    else
+                        DismountSled();
                 }
             }
-        }
-        if (Input.GetKeyDown(swearKey))
-        {
-            PlaySwear();
-        }
 
-        // Only handle player movement when not on sled
-        if (!isMountedOnSled)
-        {
             HandleMovement();
-            ApplyGravity();
+            HandleMouseLook();
+            HandleSlowEffect();
         }
 
-        HandleMouseLook();
-        HandleSlowEffect();
+        if (Input.GetKeyDown(swearKey))
+            PlaySwear();
     }
 
     void FindNearestSled()
