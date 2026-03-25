@@ -1,0 +1,23 @@
+using UnityEngine;
+
+public class EnemyHealth : MonoBehaviour
+{
+    public int health = 100;
+
+    public void TakeDamage(int amount)
+    {
+        health -= amount;
+        Debug.Log("Enemy took damage! Health now: " + health);
+
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        Debug.Log("Enemy died!");
+        Destroy(gameObject);
+    }
+}
