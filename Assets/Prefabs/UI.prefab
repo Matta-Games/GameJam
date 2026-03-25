@@ -2378,7 +2378,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 95, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7533303038276190526
 CanvasRenderer:
@@ -2444,7 +2444,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -2533,13 +2533,16 @@ MonoBehaviour:
   bodyTempBar: {fileID: 4423179507060993833}
   fatigueBar: {fileID: 913889871339662542}
   paranoiaBar: {fileID: 6851234340411365182}
+  moneyText: {fileID: 398699257969596982}
   bodyTempPercent: 0.2
   fatiguePercent: 0.2
   paranoiaPercent: 0.2
+  money: 99
   fatigueRatePer45s: 0.0098
   paranoiaRatePer45s: 0.012
+  paranoiaDrainPerSecond: 0.01
   isBeingHeated: 0
-  heatGainPerSecond: 0.05
+  heatGainPerSecond: 0.005
   coldDrainPerSecond: 0.01
 --- !u!1 &8890668974151383862
 GameObject:
