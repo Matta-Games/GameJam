@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class NPCD : MonoBehaviour
 {
@@ -15,23 +16,43 @@ public class NPCD : MonoBehaviour
     private bool isTalking = false;
     private int currentLine = 0;
 
-    public ShopController shop;
+    [Header("Shop / Camera")]
+    public Camera playerCamera;
+    public Camera shopCamera;
+
+    [Header("Player Control")]
+    public PlayerController playerController;
+
+    private bool inShop = false;
+    private bool shopTransitioning = false;
+
+    void Start()
+    {
+        // Ensure shop camera starts disabled
+        if (shopCamera != null)
+            shopCamera.enabled = false;
+    }
 
     void Update()
     {
         if (playerInRange && Input.GetKeyDown(KeyCode.F))
         {
-            if (!isTalking)
+            if (!isTalking && !inShop)
             {
                 StartDialogue();
             }
-            else
+            else if (isTalking)
             {
-                NextLine(); // skip current and go next
+                NextLine();
+            }
+            else if (inShop && !shopTransitioning)
+            {
+                StartCoroutine(ExitShopCoroutine());
             }
         }
     }
 
+    #region Dialogue
     void StartDialogue()
     {
         isTalking = true;
@@ -42,49 +63,86 @@ public class NPCD : MonoBehaviour
     void NextLine()
     {
         currentLine++;
-
         if (currentLine < dialogueLines.Length)
-        {
             ShowCurrentLine();
-        }
         else
-        {
             EndDialogue();
-        }
     }
 
     void ShowCurrentLine()
     {
         NPCmanager.Instance.ShowDialogue(dialogueLines[currentLine]);
 
-        // stop previous audio if playing
         if (voiceSource != null)
-            voiceSource.Stop();
-
-        // play matching voice line
-        if (voiceSource != null &&
-            voiceLines != null &&
-            currentLine < voiceLines.Length &&
-            voiceLines[currentLine] != null)
         {
-            voiceSource.clip = voiceLines[currentLine];
-            voiceSource.Play();
+            voiceSource.Stop();
+            if (voiceLines != null && currentLine < voiceLines.Length && voiceLines[currentLine] != null)
+            {
+                voiceSource.clip = voiceLines[currentLine];
+                voiceSource.Play();
+            }
         }
     }
 
     void EndDialogue()
     {
         isTalking = false;
-
-        if (voiceSource != null)
-            voiceSource.Stop();
-
+        if (voiceSource != null) voiceSource.Stop();
         NPCmanager.Instance.HideDialogue();
 
-        if (shop != null)
-            shop.EnterShop();
+        if (!shopTransitioning)
+        {
+            shopTransitioning = true;
+            StartCoroutine(EnterShopCoroutine());
+        }
+    }
+    #endregion
+
+    #region Shop Transition
+    IEnumerator EnterShopCoroutine()
+    {
+        if (playerController != null)
+            playerController.inShopMode = true;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        inShop = true;
+
+        if (shopCamera != null)
+            shopCamera.enabled = true;
+        if (playerCamera != null)
+            playerCamera.enabled = false;
+
+        yield return null;
+
+        shopTransitioning = false;
     }
 
+    IEnumerator ExitShopCoroutine()
+    {
+        shopTransitioning = true;
+
+        if (playerController != null)
+            playerController.inShopMode = false;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        inShop = false;
+
+        if (shopCamera != null)
+            shopCamera.enabled = false;
+        if (playerCamera != null)
+            playerCamera.enabled = true;
+
+        yield return null;
+
+        shopTransitioning = false;
+    }
+    #endregion
+
+    #region Trigger
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -96,7 +154,9 @@ public class NPCD : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInRange = false;
-            EndDialogue();
+            if (isTalking)
+                EndDialogue();
         }
     }
+    #endregion
 }

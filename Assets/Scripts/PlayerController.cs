@@ -46,22 +46,12 @@ public class PlayerController : MonoBehaviour
         if (!inShopMode)
         {
             FindNearestSled();
-
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                if (nearestSled != null)
-                {
-                    if (!nearestSled.IsPlayerMounted())
-                        MountSled(nearestSled);
-                    else
-                        DismountSled();
-                }
-            }
-
             HandleMovement();
             HandleMouseLook();
             HandleSlowEffect();
         }
+
+        ApplyGravity(); // always apply gravity regardless of shop mode
 
         if (Input.GetKeyDown(swearKey))
             PlaySwear();

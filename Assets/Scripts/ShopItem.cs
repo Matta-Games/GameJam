@@ -3,29 +3,32 @@ using UnityEngine;
 public class ShopItem : MonoBehaviour
 {
     public int price = 10;
-    public string itemName;
+    public Item item;
 
     private PlayerMoney playerMoney;
+    private PlayerInventory inventory;
 
     void Start()
     {
         playerMoney = FindObjectOfType<PlayerMoney>();
+        inventory = FindObjectOfType<PlayerInventory>();
     }
 
     void OnMouseDown()
     {
-        if (playerMoney == null) return;
+        if (playerMoney == null || inventory == null) return;
 
         if (playerMoney.Spend(price))
         {
-            GiveItemToPlayer();
-            Destroy(gameObject);
+            if (inventory.AddItem(item))
+            {
+                Debug.Log("Bought: " + item.itemName);
+                Destroy(gameObject);
+            }
+            else
+            {
+                Debug.Log("Inventory full, cannot buy item");
+            }
         }
-    }
-
-    void GiveItemToPlayer()
-    {
-        Debug.Log("Bought: " + itemName);
-        // You can later hook inventory here
     }
 }
