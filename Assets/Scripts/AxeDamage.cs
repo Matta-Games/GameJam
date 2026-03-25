@@ -2,13 +2,17 @@ using UnityEngine;
 
 public class AxeDamage : MonoBehaviour
 {
-    public int damageAmount = 20;          // Kuinka paljon damagea kirves tekee
-    public float attackRange = 2f;         // Kuinka kauas kirves ylt‰‰
-    public LayerMask enemyLayer;           // Layer, jossa viholliset ovat
+    public int damageAmount = 20;
+    public float attackRange = 2f;
+    public LayerMask enemyLayer;
+
+    [Header("Animation")]
+    public Animator animator;
+    public string swingTrigger = "Swing";
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(1))   // 1 = oikea hiiren nappi
+        if (Input.GetMouseButtonDown(1))
         {
             Attack();
         }
@@ -16,7 +20,13 @@ public class AxeDamage : MonoBehaviour
 
     void Attack()
     {
-        // Raycast pelaajan edest‰
+        // play swing animation
+        if (animator != null)
+        {
+            animator.SetTrigger(swingTrigger);
+        }
+
+        // raycast forward
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.forward, out hit, attackRange, enemyLayer))
         {

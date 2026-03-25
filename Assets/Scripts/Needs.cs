@@ -121,9 +121,10 @@ public class Needs : MonoBehaviour
     }
 
     public void addMoney(int moneyToAdd) {
-      money += moneyToAdd;
-      moneyText.text = money.ToString();
+        money += moneyToAdd;
+        moneyText.text = money.ToString();
     }
+
     public bool Spend(int amount)
     {
         if (money < amount)
