@@ -28,14 +28,18 @@ public class NPCD : MonoBehaviour
 
     void Start()
     {
-        // Ensure shop camera starts disabled
         if (shopCamera != null)
             shopCamera.enabled = false;
+
+        if (playerController == null)
+            playerController = FindObjectOfType<PlayerController>();
     }
 
     void Update()
     {
-        if (playerInRange && Input.GetKeyDown(KeyCode.F))
+        if (playerController == null) return;
+
+        if (playerInRange && playerController.interactPressed)
         {
             if (!isTalking && !inShop)
             {
@@ -55,6 +59,9 @@ public class NPCD : MonoBehaviour
     #region Dialogue
     void StartDialogue()
     {
+        if (dialogueLines == null || dialogueLines.Length == 0)
+            return;
+
         isTalking = true;
         currentLine = 0;
         ShowCurrentLine();
@@ -63,7 +70,8 @@ public class NPCD : MonoBehaviour
     void NextLine()
     {
         currentLine++;
-        if (currentLine < dialogueLines.Length)
+
+        if (dialogueLines != null && currentLine < dialogueLines.Length)
             ShowCurrentLine();
         else
             EndDialogue();
@@ -71,12 +79,20 @@ public class NPCD : MonoBehaviour
 
     void ShowCurrentLine()
     {
-        NPCmanager.Instance.ShowDialogue(dialogueLines[currentLine]);
+        if (NPCmanager.Instance != null &&
+            dialogueLines != null &&
+            currentLine < dialogueLines.Length)
+        {
+            NPCmanager.Instance.ShowDialogue(dialogueLines[currentLine]);
+        }
 
         if (voiceSource != null)
         {
             voiceSource.Stop();
-            if (voiceLines != null && currentLine < voiceLines.Length && voiceLines[currentLine] != null)
+
+            if (voiceLines != null &&
+                currentLine < voiceLines.Length &&
+                voiceLines[currentLine] != null)
             {
                 voiceSource.clip = voiceLines[currentLine];
                 voiceSource.Play();
@@ -87,8 +103,12 @@ public class NPCD : MonoBehaviour
     void EndDialogue()
     {
         isTalking = false;
-        if (voiceSource != null) voiceSource.Stop();
-        NPCmanager.Instance.HideDialogue();
+
+        if (voiceSource != null)
+            voiceSource.Stop();
+
+        if (NPCmanager.Instance != null)
+            NPCmanager.Instance.HideDialogue();
 
         if (!shopTransitioning)
         {
@@ -111,6 +131,7 @@ public class NPCD : MonoBehaviour
 
         if (shopCamera != null)
             shopCamera.enabled = true;
+
         if (playerCamera != null)
             playerCamera.enabled = false;
 
@@ -133,6 +154,7 @@ public class NPCD : MonoBehaviour
 
         if (shopCamera != null)
             shopCamera.enabled = false;
+
         if (playerCamera != null)
             playerCamera.enabled = true;
 
@@ -154,6 +176,7 @@ public class NPCD : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInRange = false;
+
             if (isTalking)
                 EndDialogue();
         }

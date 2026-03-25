@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
     private float slowAmount = 0f;
     private float slowDuration = 0f;
     private float slowTimer = 0f;
+    public bool interactPressed;
 
     [Header("Audio")]
     public AudioSource voiceSource;
@@ -43,12 +44,19 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        interactPressed = Input.GetKeyDown(KeyCode.F);
+
         if (!inShopMode)
         {
             FindNearestSled();
             HandleMovement();
             HandleMouseLook();
             HandleSlowEffect();
+        }
+
+        if (interactPressed)
+        {
+            // NPC scripts can read this
         }
 
         if (Input.GetKeyDown(KeyCode.E))
@@ -59,7 +67,7 @@ public class PlayerController : MonoBehaviour
                 DismountSled();
         }
 
-        ApplyGravity(); // always apply gravity regardless of shop mode
+        ApplyGravity();
 
         if (Input.GetKeyDown(swearKey))
             PlaySwear();

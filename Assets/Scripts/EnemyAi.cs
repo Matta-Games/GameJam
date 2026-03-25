@@ -2,74 +2,77 @@ using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
-    [Header("Detection")]
+    [Header("Target")]
+    public Transform player;
+
+    [Header("Ranges")]
     public float detectionRange = 12f;
     public float attackRange = 2f;
 
     [Header("Movement")]
     public float moveSpeed = 3f;
+    public float rotationSpeed = 5f;
 
     [Header("Attack")]
     public float attackCooldown = 1.5f;
-    public float bodyTempDamage = 0.15f; // how much heat to remove
+    public float bodyTempDamage = 0.1f;
 
-    private Transform player;
-    private Needs playerNeeds;
     private float attackTimer;
+    private Needs playerNeeds;
 
     void Start()
     {
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+            playerNeeds = player.GetComponent<Needs>();
 
-        if (playerObj != null)
-        {
-            player = playerObj.transform;
-            playerNeeds = playerObj.GetComponent<Needs>();
-        }
+        // Fix model facing
+        transform.Rotate(0f, 90f, 0f); // tweak 90/270 until it looks correct
     }
 
     void Update()
     {
         if (player == null) return;
 
-        LookAtPlayer();
+        attackTimer -= Time.deltaTime;
 
         float distance = Vector3.Distance(transform.position, player.position);
 
         if (distance <= detectionRange)
         {
-            MoveTowardsPlayer();
+            LookAtPlayer();
 
-            if (distance <= attackRange)
+            if (distance > attackRange)
+            {
+                MoveTowardsPlayer();
+            }
+            else
             {
                 Attack();
             }
         }
+    }
 
-        attackTimer -= Time.deltaTime;
+    void LookAtPlayer()
+    {
+        Vector3 direction = (player.position - transform.position).normalized;
+        direction.y = 0f;
+
+        if (direction == Vector3.zero) return;
+
+        Quaternion lookRotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            lookRotation,
+            rotationSpeed * Time.deltaTime
+        );
     }
 
     void MoveTowardsPlayer()
     {
-        // move forward in the direction the enemy is facing
-        transform.position += transform.forward * moveSpeed * Time.deltaTime;
-    }
-    void LookAtPlayer()
-    {
-        if (player == null) return;
+        Vector3 direction = (player.position - transform.position).normalized;
+        direction.y = 0f;
 
-        Vector3 direction = player.position - transform.position;
-        direction.y = 0f; // keep enemy upright
-
-        if (direction != Vector3.zero)
-        {
-            Quaternion targetRot = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                targetRot,
-                8f * Time.deltaTime
-            );
-        }
+        transform.position += direction * moveSpeed * Time.deltaTime;
     }
 
     void Attack()
@@ -83,7 +86,5 @@ public class EnemyAI : MonoBehaviour
             playerNeeds.bodyTempPercent -= bodyTempDamage;
             playerNeeds.bodyTempPercent = Mathf.Clamp01(playerNeeds.bodyTempPercent);
         }
-
-        Debug.Log("Enemy attacked — body temp reduced");
     }
 }
