@@ -3,6 +3,7 @@ using UnityEngine;
 public class Collectible : MonoBehaviour
 {
     public int value = 1; // esim. pisteet, kolikot, energia
+    public AudioClip clip;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -13,6 +14,7 @@ public class Collectible : MonoBehaviour
             PlayerMoney money = other.GetComponent<PlayerMoney>();
             if (inventory != null)
             {
+                AudioSource.PlayClipAtPoint(clip, transform.position);
                 inventory.addMoney(10);
                 money.Add(10);
             }
