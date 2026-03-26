@@ -10,9 +10,11 @@ public class Collectible : MonoBehaviour
         {
             // Lis‰‰ pisteet tai muu toiminto
             Needs inventory = other.GetComponent<Needs>();
+            PlayerMoney money = other.GetComponent<PlayerMoney>();
             if (inventory != null)
             {
                 inventory.addMoney(10);
+                money.Add(10);
             }
 
             // Tuhoa esine
