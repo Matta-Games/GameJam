@@ -5014,7 +5014,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 409e98154da710f46ad51fe449706bd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlizzardManager
-  blizzardCheckInterval: 10
+  blizzardCheckInterval: 30
   blizzardChance: 0.25
   blizzardDuration: 15
   fogDensityDelay: 5
