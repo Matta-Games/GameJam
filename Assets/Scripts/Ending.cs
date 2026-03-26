@@ -51,6 +51,14 @@ public class Ending : MonoBehaviour
             yield return null;
         }
 
+        PlayerController pc = playerController as PlayerController;
+        if (pc != null)
+        {
+            pc.cameraLocked = false;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+
         fadeComplete = true;
         Time.timeScale = 0f; // freeze the game after fade
     }

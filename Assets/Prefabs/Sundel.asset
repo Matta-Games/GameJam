@@ -15,9 +15,9 @@ MonoBehaviour:
   itemName: Sondels
   prefab: {fileID: 4967452946878005390, guid: e3959934c835466418f59b211d75f923, type: 3}
   isConsumable: 1
-  isSundel: 0
+  isSundel: 1
   isRedMoo: 0
   redMooSpeedMultiplier: 1.5
   redMooDuration: 5
-  sundelHeatAmount: 0.1
-  sundelDuration: 1
+  sundelHeatAmount: 0.5
+  sundelDuration: 3

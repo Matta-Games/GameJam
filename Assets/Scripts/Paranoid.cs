@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.UI;
+using System.Collections;
 
 public class Paranoid : MonoBehaviour
 {
@@ -7,8 +9,14 @@ public class Paranoid : MonoBehaviour
     public float triggerRadius = 5f;
     public float paranoiaIncreasePerSecond = 0.02f;
 
+    [Header("Flash Effect")]
+    public Image blackFlashImage;
+    public float flashDuration = 15f;
+    public float flashSpeed = 6f;
+
     private SphereCollider triggerCollider;
     private Needs playerNeeds;
+    private bool flashingStarted = false;
 
     void Awake()
     {
@@ -47,6 +55,38 @@ public class Paranoid : MonoBehaviour
 
         playerNeeds.paranoiaPercent += paranoiaIncreasePerSecond * Time.deltaTime;
         playerNeeds.paranoiaPercent = Mathf.Clamp01(playerNeeds.paranoiaPercent);
+
+        if (playerNeeds.paranoiaPercent >= 1f && !flashingStarted)
+        {
+            flashingStarted = true;
+            StartCoroutine(FlashBlack());
+        }
+    }
+
+    IEnumerator FlashBlack()
+    {
+        float timer = 0f;
+        Color color = blackFlashImage.color;
+
+        while (timer < flashDuration)
+        {
+            timer += Time.deltaTime;
+
+            float alpha = Mathf.PingPong(Time.time * flashSpeed, 1f);
+            color.a = alpha;
+            blackFlashImage.color = color;
+
+            yield return null;
+        }
+
+        color.a = 0f;
+        blackFlashImage.color = color;
+
+        // reset paranoia
+        if (playerNeeds != null)
+            playerNeeds.paranoiaPercent = 0f;
+
+        flashingStarted = false; // allow it to happen again
     }
 
     private void OnDrawGizmos()

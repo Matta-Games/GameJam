@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public float headBobAmount = 0.05f;
     public float mouseSensitivity = 2f;
     public Rigidbody rb;
+    public bool cameraLocked = true;
     [HideInInspector] public bool inShopMode = false;
 
     private float defaultYPos;
@@ -157,6 +158,8 @@ public class PlayerController : MonoBehaviour
 
     void HandleMouseLook()
     {
+        if (!cameraLocked) return;
+
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
@@ -165,7 +168,6 @@ public class PlayerController : MonoBehaviour
 
         cameraTransform.localRotation = Quaternion.Euler(rotationX, 0f, 0f);
 
-        // Only rotate body when not on sled
         if (!isMountedOnSled)
         {
             transform.Rotate(Vector3.up * mouseX);

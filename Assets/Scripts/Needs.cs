@@ -66,7 +66,6 @@ public class Needs : MonoBehaviour
         }
 
         UpdateAllBars();
-        addMoney(1);
     }
 
     void Update()
@@ -131,6 +130,8 @@ public class Needs : MonoBehaviour
             return false;
 
         money -= amount;
+        moneyText.text = money.ToString(); // update UI
+
         return true;
     }
 }

@@ -5,20 +5,20 @@ public class ShopItem : MonoBehaviour
     public int price = 10;
     public Item item;
 
-    private PlayerMoney playerMoney;
+    private Needs playerNeeds;
     private PlayerInventory inventory;
 
     void Start()
     {
-        playerMoney = FindObjectOfType<PlayerMoney>();
+        playerNeeds = FindObjectOfType<Needs>();
         inventory = FindObjectOfType<PlayerInventory>();
     }
 
     void OnMouseDown()
     {
-        if (playerMoney == null || inventory == null) return;
+        if (playerNeeds == null || inventory == null) return;
 
-        if (playerMoney.Spend(price))
+        if (playerNeeds.Spend(price))
         {
             if (inventory.AddItem(item))
             {
@@ -29,6 +29,10 @@ public class ShopItem : MonoBehaviour
             {
                 Debug.Log("Inventory full, cannot buy item");
             }
+        }
+        else
+        {
+            Debug.Log("Not enough money");
         }
     }
 }
