@@ -12,7 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9c79cfbb84e0c84fadf1e3a68ec351b, type: 3}
   m_Name: Sundel
   m_EditorClassIdentifier: Assembly-CSharp::Item
-  id: 1
   itemName: Sondels
-  isConsumable: 1
   prefab: {fileID: 4967452946878005390, guid: e3959934c835466418f59b211d75f923, type: 3}
+  isConsumable: 1
+  isSundel: 0
+  isRedMoo: 0
+  redMooSpeedMultiplier: 1.5
+  redMooDuration: 5
+  sundelHeatAmount: 0.1
+  sundelDuration: 1
